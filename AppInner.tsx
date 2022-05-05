@@ -1,22 +1,18 @@
-import SignIn from './src/pages/SignIn';
-import SignUp from './src/pages/SignUp';
-import Orders from './src/pages/Orders';
-import Delivery from './src/pages/Delivery';
-import Settings from './src/pages/Settings';
-import * as React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {useSelector} from 'react-redux';
-import {RootState} from './src/store/reducer';
-import useSocket from './src/hooks/useSocket';
-import {useEffect} from 'react';
-import EncryptedStorage from 'react-native-encrypted-storage';
 import axios, {AxiosError} from 'axios';
+import * as React from 'react';
+import {useEffect} from 'react';
 import {Alert} from 'react-native';
+import Config from 'react-native-config';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import {useSelector} from 'react-redux';
+import Settings from './src/pages/Settings';
+import SignIn from './src/pages/SignIn';
+import SignUp from './src/pages/SignUp';
 import userSlice from './src/slices/user';
 import {useAppDispatch} from './src/store';
-import Config from 'react-native-config';
-import orderSlice from './src/slices/order';
+import {RootState} from './src/store/reducer';
 
 export type LoggedInParamList = {
   Orders: undefined;
@@ -42,35 +38,35 @@ function AppInner() {
 
   // 앱 실행 시 토큰 있으면 로그인하는 코드
   useEffect(() => {
-    const getTokenAndRefresh = async () => {
-      try {
-        const token = await EncryptedStorage.getItem('refreshToken');
-        if (!token) {
-          return;
-        }
-        const response = await axios.post(
-          `${Config.API_URL}/refreshToken`,
-          {},
-          {
-            headers: {
-              authorization: `Bearer ${token}`,
-            },
-          },
-        );
-        dispatch(
-          userSlice.actions.setUser({
-            name: response.data.data.name,
-            email: response.data.data.email,
-            accessToken: response.data.data.accessToken,
-          }),
-        );
-      } catch (error) {
-        console.error(error);
-        if ((error as AxiosError).response?.data.code === 'expired') {
-          Alert.alert('알림', '다시 로그인 해주세요.');
-        }
-      }
-    };
+    // const getTokenAndRefresh = async () => {
+    //   try {
+    //     const token = await EncryptedStorage.getItem('refreshToken');
+    //     if (!token) {
+    //       return;
+    //     }
+    //     const response = await axios.post(
+    //       `${Config.API_URL}/refreshToken`,
+    //       {},
+    //       {
+    //         headers: {
+    //           authorization: `Bearer ${token}`,
+    //         },
+    //       },
+    //     );
+    //     dispatch(
+    //       userSlice.actions.setUser({
+    //         name: response.data.data.name,
+    //         email: response.data.data.email,
+    //         accessToken: response.data.data.accessToken,
+    //       }),
+    //     );
+    //   } catch (error) {
+    //     console.error(error);
+    //     if ((error as AxiosError).response?.data.code === 'expired') {
+    //       Alert.alert('알림', '다시 로그인 해주세요.');
+    //     }
+    //   }
+    // };
     // getTokenAndRefresh();
   }, [dispatch]);
 
